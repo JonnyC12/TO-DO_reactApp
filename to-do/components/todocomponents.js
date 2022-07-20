@@ -1,22 +1,90 @@
 import React from "react";
+/**
+ * El estado se basará de la siguiente manera
+ * 1 = "sin hacer"
+ * 2 = "en progreso"
+ * 3 = "terminada"
+ */
+
 class Container extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      countID: 0,
       tareasSinHacer: [],
       tareasEnPro: [],
       tareasTerminadas: [],
+      tareaAnnadir: "",
     };
+    this.handleAnnadirTarea = this.handleAnnadirTarea.bind(this);
+    this.handleAnnadirTareaToArrary =
+      this.handleAnnadirTareaToArrary.bind(this);
   }
+  handleAnnadirTarea(stringTarea) {
+    this.setState = { tareaAnnadir: stringTarea };
+  }
+  handleAnnadirTareaToArrary() {
+    // con slice copiamos el array para tener inmutabilidad
+    if (this.tareaAnnadir.length > 0) {
+      let array = this.state.tareasSinHacer.slice();
+      array.push({
+        id: this.state.countID,
+        msg: this.state.tareaAnnadir,
+        estado: 1,
+      });
+      // Aumentamos el estado
+      let a = this.state.countID + 1;
+      this.setState = {
+        contID: a,
+        tareasSinHacer: array,
+        tareaAnnadir: "",
+      };
+    }
+  }
+  pasarEstadoTarea(id, estado) {
+    if (estado === 1) {
+      let auxiliarSinHacer = this.state.tareasSinHacer.slice();
+      let auxiliarToDo = this.state.tareasEnPro.slice();
+      // escogemos el objeto
+      const tareaAmover = auxiliarSinHacer.find((item) => item.id === id);
+      // eliminamos el objeto del array sin hacer
+      const arrayModificado = auxiliarSinHacer.filter((item) => item.id !== id);
+
+      auxiliarToDo.push(tareaAmover);
+      this.setState = {
+        tareasSinHacer: arrayModificado,
+        tareasEnPro: auxiliarToDo,
+      };
+    }
+    if (estado === 2) {
+      let auxiliarEnPro = this.state.tareasEnPro.slice();
+      let auxiliarDone = this.state.tareasTerminadas.slice();
+      const tareaAmover = auxiliarEnPro.find((item) => item.id === id);
+      const arrayModificado = auxiliarEnPro.filter((item) => item.id !== id);
+      auxiliarDone.push(tareaAmover);
+      this.setState = {
+        tareasEnPro: arrayModificado,
+        tareasTerminadas: auxiliarDone,
+      };
+    }
+  }
+
   render() {
-    <div className="container">
-      <ButtonAddTaks />
-      <TaskContainer
-        taskArray={this.state.tareasSinHacer}
-        inProArray={this.state.tareasEnPro}
-        doneArray={this.state.tareasTerminadas}
-      />
-    </div>;
+    return (
+      <div className="container">
+        <ButtonAddTaks />
+        <TaskContainer
+          taskArray={this.state.tareasSinHacer}
+          inProArray={this.state.tareasEnPro}
+          doneArray={this.state.tareasTerminadas}
+          pasarTareaFunction={this.pasarEstadoTarea}
+        />
+        <ModalAddTask
+          onChangeText={this.handleAnnadirTarea}
+          onClickButton={this.handleAnnadirTareaToArrary}
+        />
+      </div>
+    );
   }
 }
 
@@ -56,16 +124,28 @@ class TaskContainer extends React.Component {
       let arrayTaskColContainer = [];
       // Obtenemos los array de cada columna con sus componentes TaskRow correspondiente
 
-      const arrayTaskRows = taskToDoArray.map((task, index) => (
-        <TaskRow MsgTarea={task} key={index} />
+      const arrayTaskRows = taskToDoArray.map((task) => (
+        <TaskRow
+          MsgTarea={task.msg}
+          key={task.id}
+          onClick={this.props.pasarTareaFunction}
+        />
       ));
       arrayTaskColContainer.push(arrayTaskRows);
-      const arrayInProRows = taskInProArray.map((task, index) => (
-        <TaskRow MsgTarea={task} key={index} />
+      const arrayInProRows = taskInProArray.map((task) => (
+        <TaskRow
+          MsgTarea={task}
+          key={task.id}
+          onClick={this.props.pasarTareaFunction}
+        />
       ));
       arrayTaskColContainer.push(arrayInProRows);
-      const arrayDoneRows = taskDoneArray.map((task, index) => (
-        <TaskRow MsgTarea={task} key={index} />
+      const arrayDoneRows = taskDoneArray.map((task) => (
+        <TaskRow
+          MsgTarea={task}
+          key={task.id}
+          onClick={this.props.pasarTareaFunction}
+        />
       ));
       arrayTaskColContainer.push(arrayDoneRows);
 
@@ -98,6 +178,8 @@ class TaskColContainer extends React.Component {
     <div className="col-12 col-md-6 col-lg-4">{this.props.ArrayTaskRow}</div>;
   }
 }
+
+//TODO: función para el evento on click y enlazar el evento con componente
 class TaskRow extends React.Component {
   render() {
     return (
@@ -110,7 +192,19 @@ class TaskRow extends React.Component {
   }
 }
 
-class Modal extends React.Component {
+class ModalAddTask extends React.Component {
+  constructor(props) {
+    super(props);
+    this.handleOnChangeText = this.handleOnChange.bind(this);
+    this.handleOnClick = this.handleOnClick.bind(this);
+  }
+
+  handleOnChangeText(e) {
+    this.props.onChangeText(e.target.value);
+  }
+  handleOnClick() {
+    this.props.onClickButton;
+  }
   render() {
     return (
       <div
@@ -145,6 +239,7 @@ class Modal extends React.Component {
                     placeholder="Tarea...."
                     aria-label="Tarea"
                     aria-describedby="basic-addon1"
+                    onChange={this.handleOnChangeText}
                   />
                 </div>
               </form>
@@ -157,7 +252,11 @@ class Modal extends React.Component {
               >
                 Cerrar Ventana
               </button>
-              <button type="button" class="btn btn-primary">
+              <button
+                type="button"
+                class="btn btn-primary"
+                onclick={this.handleOnClick}
+              >
                 Añadir Tarea
               </button>
             </div>
