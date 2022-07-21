@@ -4,16 +4,12 @@ import "./index.css";
 
 import reportWebVitals from "./reportWebVitals";
 import "bootstrap/dist/css/bootstrap.min.css";
-
+import "jquery/dist/jquery.min.js";
+import "bootstrap/dist/js/bootstrap.min.js";
+import App from "./App.js";
+import Container from "./components/todocomponents.js";
 const root = ReactDOM.createRoot(document.getElementById("root"));
-root.render(
-  <div className="">
-    <div className="row">
-      <div className="col-6">hola</div>
-      <div className="col-6">perro</div>
-    </div>
-  </div>
-);
+root.render(<Container />);
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))

@@ -11,34 +11,31 @@ class Container extends React.Component {
     super(props);
     this.state = {
       countID: 0,
-      tareasSinHacer: [],
+      tareasSinHacer: Array(1).fill({ id: 1, msg: "hola", estado: 1 }),
       tareasEnPro: [],
       tareasTerminadas: [],
-      tareaAnnadir: "",
     };
-    this.handleAnnadirTarea = this.handleAnnadirTarea.bind(this);
+
     this.handleAnnadirTareaToArrary =
       this.handleAnnadirTareaToArrary.bind(this);
+    this.pasarEstadoTarea = this.pasarEstadoTarea.bind(this);
   }
-  handleAnnadirTarea(stringTarea) {
-    this.setState = { tareaAnnadir: stringTarea };
-  }
-  handleAnnadirTareaToArrary() {
+
+  handleAnnadirTareaToArrary(tarea) {
     // con slice copiamos el array para tener inmutabilidad
-    if (this.tareaAnnadir.length > 0) {
+    if (tarea.length > 0) {
       let array = this.state.tareasSinHacer.slice();
       array.push({
         id: this.state.countID,
-        msg: this.state.tareaAnnadir,
+        msg: tarea,
         estado: 1,
       });
       // Aumentamos el estado
       let a = this.state.countID + 1;
-      this.setState = {
+      this.setState({
         contID: a,
         tareasSinHacer: array,
-        tareaAnnadir: "",
-      };
+      });
     }
   }
   pasarEstadoTarea(id, estado) {
@@ -47,25 +44,27 @@ class Container extends React.Component {
       let auxiliarToDo = this.state.tareasEnPro.slice();
       // escogemos el objeto
       const tareaAmover = auxiliarSinHacer.find((item) => item.id === id);
+      tareaAmover.estado = 2;
       // eliminamos el objeto del array sin hacer
       const arrayModificado = auxiliarSinHacer.filter((item) => item.id !== id);
 
       auxiliarToDo.push(tareaAmover);
-      this.setState = {
+      this.setState({
         tareasSinHacer: arrayModificado,
         tareasEnPro: auxiliarToDo,
-      };
+      });
     }
     if (estado === 2) {
       let auxiliarEnPro = this.state.tareasEnPro.slice();
       let auxiliarDone = this.state.tareasTerminadas.slice();
       const tareaAmover = auxiliarEnPro.find((item) => item.id === id);
+      tareaAmover.estado = 3;
       const arrayModificado = auxiliarEnPro.filter((item) => item.id !== id);
       auxiliarDone.push(tareaAmover);
-      this.setState = {
+      this.setState({
         tareasEnPro: arrayModificado,
         tareasTerminadas: auxiliarDone,
-      };
+      });
     }
   }
 
@@ -79,10 +78,7 @@ class Container extends React.Component {
           doneArray={this.state.tareasTerminadas}
           pasarTareaFunction={this.pasarEstadoTarea}
         />
-        <ModalAddTask
-          onChangeText={this.handleAnnadirTarea}
-          onClickButton={this.handleAnnadirTareaToArrary}
-        />
+        <ModalAddTask onClickButton={this.handleAnnadirTareaToArrary} />
       </div>
     );
   }
@@ -96,8 +92,8 @@ class ButtonAddTaks extends React.Component {
           <button
             type="button"
             className="btn btn-lg btn-block"
-            data-toggle="modal"
-            data-target="#exampleModalCenter"
+            data-bs-toggle="modal"
+            data-bs-target="#addTaskModal"
           >
             Añadir Tarea
           </button>
@@ -128,23 +124,29 @@ class TaskContainer extends React.Component {
         <TaskRow
           MsgTarea={task.msg}
           key={task.id}
-          onClick={this.props.pasarTareaFunction}
+          pasarTareaFunction={this.props.pasarTareaFunction}
+          id={task.id}
+          estado={task.estado}
         />
       ));
       arrayTaskColContainer.push(arrayTaskRows);
       const arrayInProRows = taskInProArray.map((task) => (
         <TaskRow
-          MsgTarea={task}
+          MsgTarea={task.msg}
           key={task.id}
-          onClick={this.props.pasarTareaFunction}
+          pasarTareaFunction={this.props.pasarTareaFunction}
+          id={task.id}
+          estado={task.estado}
         />
       ));
       arrayTaskColContainer.push(arrayInProRows);
       const arrayDoneRows = taskDoneArray.map((task) => (
         <TaskRow
-          MsgTarea={task}
+          MsgTarea={task.msg}
           key={task.id}
-          onClick={this.props.pasarTareaFunction}
+          pasarTareaFunction={this.props.pasarTareaFunction}
+          id={task.id}
+          estado={task.estado}
         />
       ));
       arrayTaskColContainer.push(arrayDoneRows);
@@ -175,17 +177,32 @@ class AdviceMsg extends React.Component {
 }
 class TaskColContainer extends React.Component {
   render() {
-    <div className="col-12 col-md-6 col-lg-4">{this.props.ArrayTaskRow}</div>;
+    return (
+      <div className="col-12 col-md-6 col-lg-4 border border-primary">
+        {this.props.ArrayTaskRow}
+      </div>
+    );
   }
 }
 
 //TODO: función para el evento on click y enlazar el evento con componente
 class TaskRow extends React.Component {
+  constructor(props) {
+    super(props);
+    this.handleOnClick = this.handleOnClick.bind(this);
+  }
+  handleOnClick() {
+    this.props.pasarTareaFunction(this.props.id, this.props.estado);
+  }
   render() {
     return (
       <div className="row">
-        <button type="button" className="btn btn-outline-primary">
-          this.props.MsgTarea
+        <button
+          type="button"
+          className="btn btn-outline-primary"
+          onClick={this.handleOnClick}
+        >
+          {this.props.MsgTarea}
         </button>
       </div>
     );
@@ -195,47 +212,52 @@ class TaskRow extends React.Component {
 class ModalAddTask extends React.Component {
   constructor(props) {
     super(props);
-    this.handleOnChangeText = this.handleOnChange.bind(this);
+    this.state = {
+      tarea: "",
+    };
+    this.handleOnChangeText = this.handleOnChangeText.bind(this);
     this.handleOnClick = this.handleOnClick.bind(this);
   }
 
   handleOnChangeText(e) {
-    this.props.onChangeText(e.target.value);
+    this.setState({
+      tarea: e.target.value,
+    });
   }
   handleOnClick() {
-    this.props.onClickButton;
+    this.props.onClickButton(this.state.tarea);
   }
+
   render() {
     return (
       <div
-        class="modal fade"
+        className="modal fade"
         id="addTaskModal"
-        tabindex="-1"
-        role="dialog"
-        aria-labelledby="addTaskModal"
+        tabIndex="-1"
+        aria-labelledby="exampleModalLabel"
         aria-hidden="true"
       >
-        <div class="modal-dialog modal-dialog-centered" role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="addTaskModal">
+        <div className="modal-dialog modal-dialog-centered" role="document">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h5 className="modal-title" id="addTaskModal">
                 Añade un nueva tarea
               </h5>
               <button
                 type="button"
-                class="close"
-                data-dismiss="modal"
+                className="close"
+                data-bs-dismiss="modal"
                 aria-label="Close"
               >
                 <span aria-hidden="true">&times;</span>
               </button>
             </div>
-            <div class="modal-body">
+            <div className="modal-body">
               <form>
                 <div className="form-group">
                   <input
                     type="text"
-                    class="form-control"
+                    className="form-control"
                     placeholder="Tarea...."
                     aria-label="Tarea"
                     aria-describedby="basic-addon1"
@@ -244,18 +266,18 @@ class ModalAddTask extends React.Component {
                 </div>
               </form>
             </div>
-            <div class="modal-footer">
+            <div className="modal-footer">
               <button
                 type="button"
-                class="btn btn-secondary"
-                data-dismiss="modal"
+                className="btn btn-secondary"
+                data-bs-dismiss="modal"
               >
                 Cerrar Ventana
               </button>
               <button
                 type="button"
-                class="btn btn-primary"
-                onclick={this.handleOnClick}
+                className="btn btn-primary"
+                onClick={this.handleOnClick}
               >
                 Añadir Tarea
               </button>
@@ -266,3 +288,4 @@ class ModalAddTask extends React.Component {
     );
   }
 }
+export default Container;
