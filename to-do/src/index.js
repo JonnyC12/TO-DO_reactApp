@@ -9,7 +9,8 @@ import "bootstrap/dist/js/bootstrap.min.js";
 import App from "./App.js";
 import Container from "./components/todocomponents.js";
 const root = ReactDOM.createRoot(document.getElementById("root"));
-root.render(<Container />);
+const titulos = ["Tareas", "Tareas sin hacer", "Tareas Terminadas"];
+root.render(<Container titulos={titulos} />);
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))
