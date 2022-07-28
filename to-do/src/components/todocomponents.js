@@ -75,10 +75,13 @@ class Container extends React.Component {
   render() {
     return (
       <div
-        className="container d-flex align-items-center justify-content-center"
+        className="container d-flex align-items-center justify-content-center flex-wrap"
         id="containerTask"
       >
-        <div className="row w-100 border rounded" id="taskContainer">
+        <div
+          className="row w-100 rounded mt-5 mb-5 border border-2"
+          id="taskContainer"
+        >
           <div className="col">
             <ButtonAddTaks />
             <TaskContainer
@@ -103,8 +106,7 @@ class ButtonAddTaks extends React.Component {
         <div className="col">
           <button
             type="button"
-            className="button-4 w-100 "
-            role="button"
+            className="button-4 w-100 h3"
             data-bs-toggle="modal"
             data-bs-target="#addTaskModal"
             id="taskAddButton"
@@ -202,12 +204,12 @@ class AdviceMsg extends React.Component {
 class TaskColContainer extends React.Component {
   render() {
     return (
-      <div className="col-12 col-md-6 col-lg-4 ">
+      <div className="col-12 col-md-4 col-lg-4 ">
         <div className="row">
-          <p className="text-center">{this.props.title}</p>
+          <p className="text-center h3 mb-0 pheight">{this.props.title}</p>
         </div>
         <div className="row">
-          <div className="col border border-2 columTaks rounded p-3">
+          <div className="col columTaks rounded p-3">
             {this.props.ArrayTaskRow}
           </div>
         </div>
@@ -228,10 +230,10 @@ class TaskRow extends React.Component {
   render() {
     if (this.props.estado === 3) {
       return (
-        <div className="row ms-0 me-0 mb-2">
+        <div className="row ms-0 me-0 mb-0 my-1">
           <button
             type="button"
-            className="border border-2 p-0 "
+            className="tasktButton endTask  p-0 prueba"
             onClick={this.handleOnClick}
             disabled
           >
@@ -241,10 +243,10 @@ class TaskRow extends React.Component {
       );
     } else if (this.props.estado === 2) {
       return (
-        <div className="row ms-0 me-0 mb-1">
+        <div className="row ms-0 me-0 mb-0 my-1">
           <button
             type="button"
-            className="border border-2 p-0 progresTask"
+            className="tasktButton  p-0 progresTask prueba"
             onClick={this.handleOnClick}
           >
             {this.props.MsgTarea}
@@ -253,10 +255,10 @@ class TaskRow extends React.Component {
       );
     }
     return (
-      <div className="row ms-0 me-0 mb-1">
+      <div className="row ms-0 me-0 mb-0 my-1">
         <button
           type="button"
-          className="p-0 todoTask"
+          className=" tasktButton p-0 todoTask prueba"
           onClick={this.handleOnClick}
         >
           {this.props.MsgTarea}
@@ -300,11 +302,9 @@ class ModalAddTask extends React.Component {
         aria-hidden="true"
       >
         <div className="modal-dialog modal-dialog-centered" role="document">
-          <div className="modal-content">
+          <div className="modal-content" id="cuadroModal">
             <div className="modal-header">
-              <h5 className="modal-title" id="addTaskModal">
-                Añade un nueva tarea
-              </h5>
+              <h5 className="modal-title">Añade un nueva tarea</h5>
               <button
                 type="button"
                 className="close"
@@ -342,6 +342,7 @@ class ModalAddTask extends React.Component {
                 type="button"
                 className="btn btn-primary"
                 onClick={this.handleOnClick}
+                id="addTaskBtn"
               >
                 Añadir Tarea
               </button>

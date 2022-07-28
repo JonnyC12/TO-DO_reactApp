@@ -13,24 +13,56 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
-
 #containerTask{
-  height: 100vh;
+  min-height: 100vh;
 }
+
 #taskContainer{
-  background-color: #f3f5f1;
+  background-color: #f8f7f5;
 }
 #root{
-  background-color:#abdbcb;
+  background-color:#00a2ad;
+  height: 100%;
+}
+#cuadroModal{
+  background-color: #f8f7f5;
+}
+#addTaskBtn{
+  background-color: #0a707c;
+  border-color: #57bec2;
+}
+#cerrarModal{
+  background-color:#f25c56;
+  border-color:#f5837c;
+}
+.pheight{
+  min-height: 4rem;
+
+}
+.close{
+  border:none;
+  background-color: #f8f7f5;
+
 }
 .columTaks{
-  min-height: 35px;
+  min-height: 4rem;
 }
-.todoTask{
-  background-color:#f8be46 ;
+.tasktButton{
+  height: 3rem !important;
+}
+.endTask{
+  background-color: #88a8aa;
   border: 1px solid;
-  border-color: #f6da79;
+  border-color: #a7a29b;
   border-radius: 5px;
+}
+
+.todoTask{
+  background-color:#f6a800 ;
+  border: 1px solid;
+  border-color: #f6a800;
+  border-radius: 5px;
+  
 }
 .progresTask{
   background-color: #f25c56;
@@ -38,10 +70,11 @@ code {
   border-color: #f5837c;
   border-radius: 5px;
 }
+
 /* CSS */
 .button-4 {
   appearance: none;
-  background-color: #FAFBFC;
+  background-color: #88a8aa;
   border: 1px solid rgba(27, 31, 35, 0.15);
   border-radius: 6px;
   box-shadow: rgba(27, 31, 35, 0.04) 0 1px 0, rgba(255, 255, 255, 0.25) 0 1px 0 inset;
@@ -66,7 +99,7 @@ code {
 }
 
 .button-4:hover {
-  background-color: #F3F4F6;
+  background-color: #a7a29b;
   text-decoration: none;
   transition-duration: 0.1s;
 }
@@ -94,4 +127,13 @@ code {
 
 .button-4:-webkit-details-marker {
   display: none;
+}
+
+@keyframes aparicionBloque {
+  from {opacity: 0;}
+  to {opacity: 1;}
+}
+.prueba{
+  animation-name: aparicionBloque;
+  animation-duration: 1s;
 }
